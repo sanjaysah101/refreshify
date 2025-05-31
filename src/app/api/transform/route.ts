@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 
 import puppeteer from "puppeteer";
 
+import { analyzeAndModernizeUrl } from "../../../lib/geminiService";
+
 export async function POST(request: NextRequest) {
   try {
     const { scrapedData, theme } = await request.json();
@@ -11,7 +13,8 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate transformed HTML based on theme
-    const transformedHtml = generateTransformedHtml(scrapedData, theme);
+    // const transformedHtml = generateTransformedHtml(scrapedData, theme);
+    const transformedHtml = await analyzeAndModernizeUrl(scrapedData.url, scrapedData.originalHTML);
 
     // Create screenshot of transformed version
     const screenshot = await generateTransformedScreenshot(transformedHtml);
@@ -38,7 +41,7 @@ function generateTransformedHtml(scrapedData: any, theme: string): string {
   // Enhanced theme configurations
   const themeConfigs = {
     classic: {
-      fontFamily: "Georgia, \"Times New Roman\", serif",
+      fontFamily: 'Georgia, "Times New Roman", serif',
       primaryColor: "#2c3e50",
       secondaryColor: "#34495e",
       backgroundColor: "#f8f9fa",
@@ -50,7 +53,7 @@ function generateTransformedHtml(scrapedData: any, theme: string): string {
       cardStyle: "border: 1px solid #dee2e6; background: white;",
     },
     modern: {
-      fontFamily: "\"Inter\", \"Segoe UI\", sans-serif",
+      fontFamily: '"Inter", "Segoe UI", sans-serif',
       primaryColor: "#1a202c",
       secondaryColor: "#2d3748",
       backgroundColor: "#ffffff",
@@ -62,7 +65,7 @@ function generateTransformedHtml(scrapedData: any, theme: string): string {
       cardStyle: "background: white; border: 1px solid #e2e8f0;",
     },
     morphism: {
-      fontFamily: "\"Poppins\", sans-serif",
+      fontFamily: '"Poppins", sans-serif',
       primaryColor: "#ffffff",
       secondaryColor: "#f1f5f9",
       backgroundColor: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
@@ -77,7 +80,7 @@ function generateTransformedHtml(scrapedData: any, theme: string): string {
         "background: rgba(255, 255, 255, 0.15); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2);",
     },
     animated: {
-      fontFamily: "\"Roboto\", sans-serif",
+      fontFamily: '"Roboto", sans-serif',
       primaryColor: "#2d3748",
       secondaryColor: "#4a5568",
       backgroundColor: "#f7fafc",

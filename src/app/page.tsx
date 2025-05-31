@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { ThemeSelector } from "@/components/forms/theme-selector";
+import { THEME_OPTIONS, ThemeSelector } from "@/components/forms/theme-selector";
 import { UrlInput } from "@/components/forms/url-input";
 import { ExportControls } from "@/components/preview/export-controls";
 import { ResponsivePreview } from "@/components/preview/responsive-preview";
@@ -33,7 +33,7 @@ interface ProgressStep {
 
 const HomePage = () => {
   const [scrapedData, setScrapedData] = useState<ScrapedData | null>(null);
-  const [selectedTheme, setSelectedTheme] = useState<string>("modern");
+  const [selectedTheme, setSelectedTheme] = useState<string>(THEME_OPTIONS[0].value);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformedData, setTransformedData] = useState<any>(null);
   const [transformProgress, setTransformProgress] = useState(0);
@@ -150,7 +150,12 @@ const HomePage = () => {
                 <>
                   <div>
                     <h4 className="mb-3 text-lg font-medium">Choose Your Theme</h4>
-                    <ThemeSelector selectedTheme={selectedTheme} onThemeChange={setSelectedTheme} />
+                    <ThemeSelector
+                      isLoading={isTransforming}
+                      idPrefix="urlForm"
+                      selectedTheme={selectedTheme}
+                      onThemeChange={setSelectedTheme}
+                    />
                   </div>
 
                   <div className="flex justify-center pt-4">
