@@ -4,6 +4,13 @@ import { FC } from "react";
 
 import { ensureApiKey } from "../../lib/geminiService";
 import { Label } from "../ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select"; // Added import for custom Select components
 
 interface ThemeSelectorProps {
   idPrefix: string;
@@ -27,19 +34,21 @@ export const ThemeSelector: FC<ThemeSelectorProps> = ({ idPrefix, selectedTheme,
     <Label htmlFor={`${idPrefix}Theme`} className="bloc mb-2">
       Select Modernization Theme
     </Label>
-    <select
-      id={`${idPrefix}Theme`}
+    <Select
       value={selectedTheme}
-      onChange={(e) => onThemeChange(e.target.value)}
-      className="w-full rounded-lg border-2 border-gray-600 p-3 text-gray-200 shadow-sm transition-shadow duration-300 focus:border-indigo-500 focus:shadow-md focus:ring-3 focus:ring-indigo-500"
+      onValueChange={onThemeChange} // Changed from onChange to onValueChange
       disabled={isLoading || !ensureApiKey()}
-      aria-label="Select modernization theme"
     >
-      {THEME_OPTIONS.map((option) => (
-        <option key={option.value} value={option.value}>
-          {option.label}
-        </option>
-      ))}
-    </select>
+      <SelectTrigger id={`${idPrefix}Theme`} className="w-full">
+        <SelectValue placeholder="Select a theme" />
+      </SelectTrigger>
+      <SelectContent>
+        {THEME_OPTIONS.map((option) => (
+          <SelectItem key={option.value} value={option.value}>
+            {option.label}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   </div>
 );
