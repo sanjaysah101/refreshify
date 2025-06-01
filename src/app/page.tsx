@@ -8,6 +8,7 @@ import { ExportControls } from "@/components/preview/export-controls";
 import { ResponsivePreview } from "@/components/preview/responsive-preview";
 import { Button } from "@/components/ui/button";
 import { ProgressIndicator } from "@/components/ui/progress-indicator";
+import { callOpenAI } from "../lib/openAI";
 
 interface ScrapedData {
   url: string;
@@ -122,7 +123,7 @@ const HomePage = () => {
               <h1 className="text-foreground text-2xl font-bold">RebuildWeb</h1>
               <p className="text-muted-foreground text-sm">Transform any website into a modern masterpiece</p>
             </div>
-            <Button variant="outline">View Examples</Button>
+            <Button variant="outline" onClick={callOpenAI}>View Examples</Button>
           </div>
         </div>
       </header>

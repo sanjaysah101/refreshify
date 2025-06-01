@@ -6,7 +6,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   // Await params before accessing properties
   const { id: previewId } = await params;
 
-  if (!previewId || !previewStorage.has(previewId)) {
+  if (!previewId || !(await previewStorage.has(previewId))) {
     return new NextResponse(
       `<!DOCTYPE html>
       <html>
@@ -26,7 +26,10 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     );
   }
 
-  const previewData = previewStorage.get(previewId)!;
+  const previewData = await previewStorage.get(previewId);
+  if (!previewData) {
+    return new NextResponse("Preview not found", { status: 404 });
+  }
 
   // Add sharing meta tags and analytics
   const enhancedHtml = addPreviewEnhancements(previewData.html, previewData, previewId);

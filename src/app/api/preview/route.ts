@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
     const previewId = generatePreviewId();
 
     // Store the transformed data
-    previewStorage.set(previewId, {
+    await previewStorage.set(previewId, {
       html,
       theme,
       originalUrl: originalUrl || "",
@@ -41,11 +41,14 @@ export async function GET(request: NextRequest) {
   const url = new URL(request.url);
   const previewId = url.pathname.split("/").pop();
 
-  if (!previewId || !previewStorage.has(previewId)) {
+  if (!previewId || !(await previewStorage.has(previewId))) {
     return new NextResponse("Preview not found", { status: 404 });
   }
 
-  const previewData = previewStorage.get(previewId)!;
+  const previewData = await previewStorage.get(previewId);
+  if (!previewData) {
+    return new NextResponse("Preview not found", { status: 404 });
+  }
 
   // Add meta tags for better sharing
   const enhancedHtml = addSharingMetaTags(previewData.html, previewData);

@@ -1,6 +1,4 @@
-/* eslint-disable no-console */
-import fs from "fs";
-import path from "path";
+import { PrismaClient } from "../generated/prisma";
 
 export interface PreviewData {
   html: string;
@@ -11,11 +9,10 @@ export interface PreviewData {
 
 class PreviewStorage {
   private static instance: PreviewStorage;
-  private storage = new Map<string, PreviewData>();
-  private storageFile = path.join(process.cwd(), ".preview-cache.json");
+  private prisma: PrismaClient;
 
   private constructor() {
-    this.loadFromFile();
+    this.prisma = new PrismaClient();
   }
 
   public static getInstance(): PreviewStorage {
@@ -25,57 +22,79 @@ class PreviewStorage {
     return PreviewStorage.instance;
   }
 
-  private loadFromFile() {
-    try {
-      if (fs.existsSync(this.storageFile)) {
-        const data = JSON.parse(fs.readFileSync(this.storageFile, "utf8"));
-        this.storage = new Map(Object.entries(data));
-      }
-    } catch (error) {
-      console.warn("Could not load preview cache:", error);
-    }
-  }
-
-  private saveToFile() {
-    try {
-      const data = Object.fromEntries(this.storage);
-      fs.writeFileSync(this.storageFile, JSON.stringify(data, null, 2));
-    } catch (error) {
-      console.warn("Could not save preview cache:", error);
-    }
-  }
-
-  public set(id: string, data: PreviewData): void {
+  public async set(id: string, data: PreviewData): Promise<void> {
     // Clean up old previews (older than 1 hour)
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString();
-    for (const [key, value] of this.storage.entries()) {
-      if (value.createdAt < oneHourAgo) {
-        this.storage.delete(key);
-      }
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    await this.prisma.previewData.deleteMany({
+      where: {
+        createdAt: {
+          lt: oneHourAgo,
+        },
+      },
+    });
+
+    // Upsert the new preview data
+    await this.prisma.previewData.upsert({
+      where: { previewId: id },
+      update: {
+        html: data.html,
+        theme: data.theme,
+        originalUrl: data.originalUrl,
+        updatedAt: new Date(),
+      },
+      create: {
+        previewId: id,
+        html: data.html,
+        theme: data.theme,
+        originalUrl: data.originalUrl,
+      },
+    });
+  }
+
+  public async get(id: string): Promise<PreviewData | null> {
+    const result = await this.prisma.previewData.findUnique({
+      where: { previewId: id },
+    });
+
+    if (!result) return null;
+
+    return {
+      html: result.html,
+      theme: result.theme,
+      originalUrl: result.originalUrl,
+      createdAt: result.createdAt.toISOString(),
+    };
+  }
+
+  public async has(id: string): Promise<boolean> {
+    const result = await this.prisma.previewData.findUnique({
+      where: { previewId: id },
+      select: { id: true },
+    });
+    return result !== null;
+  }
+
+  public async delete(id: string): Promise<boolean> {
+    try {
+      await this.prisma.previewData.delete({
+        where: { previewId: id },
+      });
+      return true;
+    } catch {
+      return false;
     }
-
-    this.storage.set(id, data);
-    this.saveToFile();
   }
 
-  public get(id: string): PreviewData | undefined {
-    return this.storage.get(id);
+  public async clear(): Promise<void> {
+    await this.prisma.previewData.deleteMany();
   }
 
-  public has(id: string): boolean {
-    return this.storage.has(id);
+  public async size(): Promise<number> {
+    return await this.prisma.previewData.count();
   }
 
-  public delete(id: string): boolean {
-    return this.storage.delete(id);
-  }
-
-  public clear(): void {
-    this.storage.clear();
-  }
-
-  public size(): number {
-    return this.storage.size;
+  public async disconnect(): Promise<void> {
+    await this.prisma.$disconnect();
   }
 }
 
