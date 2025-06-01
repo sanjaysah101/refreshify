@@ -2,13 +2,12 @@
 
 import { useState } from "react";
 
-import { Check, Copy, Download, ExternalLink, Share } from "lucide-react";
+import { Check, Copy, Download, ExternalLink, RefreshCw, Share } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 
 interface ExportControlsProps {
   transformedData?: {
@@ -17,10 +16,11 @@ interface ExportControlsProps {
     transformedAt: string;
   };
   originalUrl?: string;
+  shareUrl?: string;
+  onNewShareUrl?: (data: any) => Promise<void>;
 }
 
-export const ExportControls = ({ transformedData, originalUrl }: ExportControlsProps) => {
-  const [shareUrl, setShareUrl] = useState<string>("");
+export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewShareUrl }: ExportControlsProps) => {
   const [isGeneratingUrl, setIsGeneratingUrl] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
@@ -41,7 +41,6 @@ export const ExportControls = ({ transformedData, originalUrl }: ExportControlsP
   const handleDownloadCSS = () => {
     if (!transformedData) return;
 
-    // Extract CSS from the HTML
     const parser = new DOMParser();
     const doc = parser.parseFromString(transformedData.html, "text/html");
     const styleElement = doc.querySelector("style");
@@ -68,27 +67,14 @@ export const ExportControls = ({ transformedData, originalUrl }: ExportControlsP
     }
   };
 
-  const handleGenerateShareUrl = async () => {
-    if (!transformedData) return;
+  const handleRegenerateShareUrl = async () => {
+    if (!transformedData || !onNewShareUrl) return;
 
     setIsGeneratingUrl(true);
     try {
-      const response = await fetch("/api/preview", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          html: transformedData.html,
-          theme: transformedData.theme,
-          originalUrl: originalUrl,
-        }),
-      });
-
-      const data = await response.json();
-      if (data.success) {
-        setShareUrl(data.previewUrl);
-      }
+      await onNewShareUrl(transformedData);
     } catch (error) {
-      console.error("Failed to generate share URL:", error);
+      console.error("Failed to regenerate share URL:", error);
     } finally {
       setIsGeneratingUrl(false);
     }
@@ -124,84 +110,102 @@ export const ExportControls = ({ transformedData, originalUrl }: ExportControlsP
   }
 
   return (
-    <Card className="p-4">
-      <div className="space-y-4">
-        <div className="flex items-center justify-between">
-          <h3 className="font-medium">Export & Share Options</h3>
-          <Badge variant="outline">{transformedData.theme} theme</Badge>
-        </div>
-
-        {/* Download Options */}
-        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
+    <div className="space-y-6">
+      {/* Download Options */}
+      <div>
+        <h4 className="font-medium mb-3 flex items-center gap-2">
+          <Download className="h-4 w-4" />
+          Download Files
+        </h4>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <Button variant="outline" size="sm" onClick={handleDownloadHTML} className="flex items-center gap-2">
             <Download className="h-4 w-4" />
-            HTML
+            HTML File
           </Button>
-
           <Button variant="outline" size="sm" onClick={handleDownloadCSS} className="flex items-center gap-2">
             <Download className="h-4 w-4" />
-            CSS
+            CSS File
           </Button>
-
           <Button variant="outline" size="sm" onClick={handleLivePreview} className="flex items-center gap-2">
             <ExternalLink className="h-4 w-4" />
-            Preview
+            Live Preview
           </Button>
         </div>
-
-        {/* Shareable URL Section */}
-        <div className="border-t pt-4">
-          <div className="mb-3 flex items-center gap-2">
-            <Share className="h-4 w-4" />
-            <Label className="text-sm font-medium">Shareable Link</Label>
-          </div>
-
-          {!shareUrl ? (
-            <Button onClick={handleGenerateShareUrl} disabled={isGeneratingUrl} className="w-full" variant="default">
-              {isGeneratingUrl ? (
-                <>
-                  <div className="mr-2 h-4 w-4 animate-spin rounded-full border-b-2 border-white" />
-                  Generating...
-                </>
-              ) : (
-                <>
-                  <Share className="mr-2 h-4 w-4" />
-                  Generate Shareable URL
-                </>
-              )}
-            </Button>
-          ) : (
-            <div className="space-y-2">
-              <div className="flex gap-2">
-                <Input
-                  value={shareUrl}
-                  readOnly
-                  className="flex-1 text-sm"
-                  placeholder="Shareable URL will appear here"
-                />
-                <Button size="sm" variant="outline" onClick={handleCopyUrl} className="flex items-center gap-1">
-                  {isCopied ? <Check className="h-4 w-4" /> : <Copy className="h-4 w-4" />}
-                  {isCopied ? "Copied!" : "Copy"}
-                </Button>
-              </div>
-
-              <Button size="sm" variant="default" onClick={handleOpenShareUrl} className="w-full">
-                <ExternalLink className="mr-2 h-4 w-4" />
-                Open Shareable Preview
-              </Button>
-
-              <p className="text-muted-foreground text-xs">
-                💡 Share this URL with others to showcase your transformed website
-              </p>
-            </div>
-          )}
-        </div>
-
-        <div className="text-muted-foreground border-t pt-3 text-xs">
-          <p>Original: {originalUrl}</p>
-          <p>Transformed: {new Date(transformedData.transformedAt).toLocaleString()}</p>
-        </div>
       </div>
-    </Card>
+
+      {/* Share URL Section */}
+      <div>
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="font-medium flex items-center gap-2">
+            <Share className="h-4 w-4" />
+            Share URL
+          </h4>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleRegenerateShareUrl}
+            disabled={isGeneratingUrl}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className={`h-4 w-4 ${isGeneratingUrl ? "animate-spin" : ""}`} />
+            {isGeneratingUrl ? "Generating..." : "New URL"}
+          </Button>
+        </div>
+        
+        {shareUrl ? (
+          <div className="space-y-2">
+            <div className="flex gap-2">
+              <Input
+                value={shareUrl}
+                readOnly
+                className="flex-1 font-mono text-sm"
+              />
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleCopyUrl}
+                className="flex items-center gap-2 min-w-[80px]"
+              >
+                {isCopied ? (
+                  <>
+                    <Check className="h-4 w-4" />
+                    Copied
+                  </>
+                ) : (
+                  <>
+                    <Copy className="h-4 w-4" />
+                    Copy
+                  </>
+                )}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleOpenShareUrl}
+                className="flex items-center gap-2"
+              >
+                <ExternalLink className="h-4 w-4" />
+                Open
+              </Button>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Share this URL to let others view your transformed website
+            </p>
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Share URL will be generated automatically
+          </p>
+        )}
+      </div>
+
+      {/* Theme Badge */}
+      <div className="flex items-center justify-between pt-4 border-t">
+        <span className="text-sm text-muted-foreground">Applied Theme:</span>
+        <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-purple-50">
+          {transformedData.theme}
+        </Badge>
+      </div>
+    </div>
   );
 };

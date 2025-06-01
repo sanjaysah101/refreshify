@@ -129,7 +129,7 @@ Generate the full HTML document for the modern version:`;
   return callGeminiApi(prompt);
 }
 
-export async function analyzeAndModernizeUrl(url: string, theme: string): Promise<string> {
+export async function analyzeAndModernizeUrl(url: string, theme: string, originalHTML: string): Promise<string> {
   const prompt = `You are an expert web analyst and modern web developer. You will be given a URL of a website and a desired theme.
 
 Your Task:
@@ -145,6 +145,11 @@ Your Task:
 Provided URL:
 ---
 ${url}
+---
+
+Original HTML Content:
+---
+${originalHTML}
 ---
 
 Desired Modern Theme: ${theme}

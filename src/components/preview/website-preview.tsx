@@ -6,7 +6,6 @@ import { Download, ExternalLink, Monitor, Smartphone } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 
 interface WebsitePreviewProps {
   title: string;
@@ -31,14 +30,15 @@ export const WebsitePreview = ({
   onOpenPreview,
 }: WebsitePreviewProps) => {
   const [viewMode, setViewMode] = useState<"desktop" | "mobile">("desktop");
+  const [imageError, setImageError] = useState(false);
 
   return (
-    <Card className="p-4">
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="font-medium">{title}</h3>
+    <div className="p-4 space-y-4">
+      {/* Header */}
+      <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <Badge variant={type === "original" ? "secondary" : "default"}>
-            {type === "original" ? "Original" : "Transformed"}
+          <Badge variant={type === "original" ? "secondary" : "default"} className="capitalize">
+            {type}
           </Badge>
           {type === "transformed" && (
             <div className="flex gap-1">
@@ -46,7 +46,7 @@ export const WebsitePreview = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => setViewMode("desktop")}
-                className={viewMode === "desktop" ? "bg-muted" : ""}
+                className={`h-8 w-8 p-0 ${viewMode === "desktop" ? "bg-muted" : ""}`}
               >
                 <Monitor className="h-4 w-4" />
               </Button>
@@ -54,7 +54,7 @@ export const WebsitePreview = ({
                 variant="ghost"
                 size="sm"
                 onClick={() => setViewMode("mobile")}
-                className={viewMode === "mobile" ? "bg-muted" : ""}
+                className={`h-8 w-8 p-0 ${viewMode === "mobile" ? "bg-muted" : ""}`}
               >
                 <Smartphone className="h-4 w-4" />
               </Button>
@@ -63,39 +63,57 @@ export const WebsitePreview = ({
         </div>
       </div>
 
+      {/* Preview Container */}
       <div
-        className={`bg-muted mb-3 overflow-hidden rounded-lg ${
+        className={`bg-muted overflow-hidden rounded-lg border-2 border-dashed border-muted-foreground/20 ${
           viewMode === "mobile" ? "mx-auto aspect-[9/16] max-w-sm" : "aspect-video"
         }`}
       >
-        {screenshot ? (
-          <img src={screenshot} alt={`${type} website preview`} className="h-full w-full object-cover" />
+        {screenshot && !imageError ? (
+          <img
+            src={screenshot}
+            alt={`${type} website preview`}
+            className="h-full w-full object-cover object-top"
+            onError={() => setImageError(true)}
+          />
         ) : (
-          <div className="text-muted-foreground flex h-full w-full items-center justify-center">
-            No preview available
+          <div className="flex h-full w-full items-center justify-center p-8">
+            <div className="text-center text-muted-foreground">
+              <Monitor className="mx-auto mb-2 h-8 w-8" />
+              <p className="text-sm font-medium">Preview Unavailable</p>
+              <p className="text-xs">Screenshot could not be generated</p>
+            </div>
           </div>
         )}
       </div>
 
+      {/* Metadata */}
       {metadata && (
-        <div className="mb-3 space-y-1">
-          <h4 className="text-sm font-medium">{metadata.title}</h4>
-          <p className="text-muted-foreground line-clamp-2 text-xs">{metadata.description}</p>
+        <div className="space-y-2">
+          <h4 className="font-medium text-sm line-clamp-1">{metadata.title}</h4>
+          <p className="text-muted-foreground text-xs line-clamp-2 leading-relaxed">
+            {metadata.description}
+          </p>
         </div>
       )}
 
-      {type === "transformed" && (
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" onClick={onOpenPreview} className="flex-1">
-            <ExternalLink className="mr-2 h-4 w-4" />
-            Preview
-          </Button>
-          <Button variant="outline" size="sm" onClick={onDownload} className="flex-1">
-            <Download className="mr-2 h-4 w-4" />
-            Download
-          </Button>
+      {/* Action Buttons */}
+      {type === "transformed" && (onOpenPreview || onDownload) && (
+        <div className="flex gap-2 pt-2 border-t">
+          {onOpenPreview && (
+            <Button variant="outline" size="sm" onClick={onOpenPreview} className="flex-1">
+              <ExternalLink className="mr-2 h-4 w-4" />
+              Preview
+            </Button>
+          )}
+          {onDownload && (
+            <Button variant="outline" size="sm" onClick={onDownload} className="flex-1">
+              <Download className="mr-2 h-4 w-4" />
+              Download
+            </Button>
+          )}
         </div>
       )}
-    </Card>
+    </div>
   );
 };

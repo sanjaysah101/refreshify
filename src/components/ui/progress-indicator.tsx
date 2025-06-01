@@ -14,7 +14,7 @@ interface ProgressStep {
 
 interface ProgressIndicatorProps {
   steps: ProgressStep[];
-  currentStep?: string;
+  // currentStep?: string;
   progress?: number;
 }
 

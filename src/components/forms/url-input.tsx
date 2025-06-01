@@ -10,9 +10,10 @@ import { Label } from "@/components/ui/label";
 
 interface UrlInputProps {
   onDataScraped?: (data: any) => void;
+  onAnalyzeStart?: () => void;
 }
 
-export const UrlInput = ({ onDataScraped }: UrlInputProps) => {
+export const UrlInput = ({ onDataScraped, onAnalyzeStart }: UrlInputProps) => {
   const [url, setUrl] = useState("");
   const [isValidating, setIsValidating] = useState(false);
   const [isValid, setIsValid] = useState<boolean | null>(null);
@@ -33,29 +34,39 @@ export const UrlInput = ({ onDataScraped }: UrlInputProps) => {
     setError(null);
 
     if (newUrl) {
-      setIsValid(validateUrl(newUrl));
+      const valid = validateUrl(newUrl);
+      setIsValid(valid);
+      if (!valid) {
+        setError("Please enter a valid URL (e.g., https://example.com)");
+      }
     } else {
       setIsValid(null);
     }
   };
 
-  const handleScrapeWebsite = async () => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter" && isValid && !isValidating) {
+      handleAnalyze();
+    }
+  };
+
+  const handleAnalyze = async () => {
     if (!url || !isValid) return;
 
     setIsValidating(true);
     setError(null);
+    
+    // Reset app state when starting new analysis
+    onAnalyzeStart?.();
 
     try {
       const response = await fetch("/api/scrape", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ url }),
       });
 
       const result = await response.json();
-
       if (result.success) {
         onDataScraped?.(result.data);
       } else {
@@ -63,38 +74,51 @@ export const UrlInput = ({ onDataScraped }: UrlInputProps) => {
       }
     } catch (error) {
       setError("Network error. Please try again.");
-      console.error("Error scraping website:", error);
     } finally {
       setIsValidating(false);
     }
   };
 
   return (
-    <div className="space-y-3">
-      <Label htmlFor="url-input">Website URL</Label>
-      <div className="flex gap-2">
-        <div className="flex-1">
-          <Input
-            id="url-input"
-            type="url"
-            placeholder="https://example.com"
-            value={url}
-            onChange={handleUrlChange}
-            className={`${isValid === false ? "border-destructive" : isValid === true ? "border-green-500" : ""}`}
-          />
-          {isValid === false && <p className="text-destructive mt-1 text-sm">Please enter a valid URL</p>}
-          {error && <p className="text-destructive mt-1 text-sm">{error}</p>}
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <Label htmlFor="url-input" className="text-sm font-medium">
+          Website URL
+        </Label>
+        <div className="flex gap-2">
+          <div className="flex-1">
+            <Input
+              id="url-input"
+              type="url"
+              placeholder="https://example.com"
+              value={url}
+              onChange={handleUrlChange}
+              onKeyPress={handleKeyPress}
+              className={`transition-colors ${
+                isValid === false ? "border-red-500 focus:border-red-500" : 
+                isValid === true ? "border-green-500 focus:border-green-500" : ""
+              }`}
+              disabled={isValidating}
+            />
+            {error && (
+              <p className="mt-1 text-xs text-red-600">{error}</p>
+            )}
+          </div>
+          <Button
+            onClick={handleAnalyze}
+            disabled={!isValid || isValidating}
+            className="min-w-[100px]"
+          >
+            {isValidating ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                Analyzing
+              </>
+            ) : (
+              "Analyze"
+            )}
+          </Button>
         </div>
-        <Button variant="outline" onClick={handleScrapeWebsite} disabled={!isValid || isValidating}>
-          {isValidating ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            "Analyze"
-          )}
-        </Button>
       </div>
     </div>
   );
