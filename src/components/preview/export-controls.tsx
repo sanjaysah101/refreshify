@@ -113,11 +113,11 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
     <div className="space-y-6">
       {/* Download Options */}
       <div>
-        <h4 className="font-medium mb-3 flex items-center gap-2">
+        <h4 className="mb-3 flex items-center gap-2 font-medium">
           <Download className="h-4 w-4" />
           Download Files
         </h4>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+        <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
           <Button variant="outline" size="sm" onClick={handleDownloadHTML} className="flex items-center gap-2">
             <Download className="h-4 w-4" />
             HTML File
@@ -135,8 +135,8 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
 
       {/* Share URL Section */}
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="font-medium flex items-center gap-2">
+        <div className="mb-3 flex items-center justify-between">
+          <h4 className="flex items-center gap-2 font-medium">
             <Share className="h-4 w-4" />
             Share URL
           </h4>
@@ -151,20 +151,16 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
             {isGeneratingUrl ? "Generating..." : "New URL"}
           </Button>
         </div>
-        
+
         {shareUrl ? (
           <div className="space-y-2">
             <div className="flex gap-2">
-              <Input
-                value={shareUrl}
-                readOnly
-                className="flex-1 font-mono text-sm"
-              />
+              <Input value={shareUrl} readOnly className="flex-1 font-mono text-sm" />
               <Button
                 variant="outline"
                 size="sm"
                 onClick={handleCopyUrl}
-                className="flex items-center gap-2 min-w-[80px]"
+                className="flex min-w-[80px] items-center gap-2"
               >
                 {isCopied ? (
                   <>
@@ -178,30 +174,21 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
                   </>
                 )}
               </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleOpenShareUrl}
-                className="flex items-center gap-2"
-              >
+              <Button variant="outline" size="sm" onClick={handleOpenShareUrl} className="flex items-center gap-2">
                 <ExternalLink className="h-4 w-4" />
                 Open
               </Button>
             </div>
-            <p className="text-xs text-muted-foreground">
-              Share this URL to let others view your transformed website
-            </p>
+            <p className="text-muted-foreground text-xs">Share this URL to let others view your transformed website</p>
           </div>
         ) : (
-          <p className="text-sm text-muted-foreground">
-            Share URL will be generated automatically
-          </p>
+          <p className="text-muted-foreground text-sm">Share URL will be generated automatically</p>
         )}
       </div>
 
       {/* Theme Badge */}
-      <div className="flex items-center justify-between pt-4 border-t">
-        <span className="text-sm text-muted-foreground">Applied Theme:</span>
+      <div className="flex items-center justify-between border-t pt-4">
+        <span className="text-muted-foreground text-sm">Applied Theme:</span>
         <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-purple-50">
           {transformedData.theme}
         </Badge>

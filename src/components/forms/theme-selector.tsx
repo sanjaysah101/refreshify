@@ -4,13 +4,9 @@ import { FC } from "react";
 
 import { ensureApiKey } from "../../lib/geminiService";
 import { Label } from "../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select"; // Added import for custom Select components
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+
+// Added import for custom Select components
 
 interface ThemeSelectorProps {
   idPrefix: string;

@@ -33,7 +33,7 @@ export const WebsitePreview = ({
   const [imageError, setImageError] = useState(false);
 
   return (
-    <div className="p-4 space-y-4">
+    <div className="space-y-4 p-4">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -65,7 +65,7 @@ export const WebsitePreview = ({
 
       {/* Preview Container */}
       <div
-        className={`bg-muted overflow-hidden rounded-lg border-2 border-dashed border-muted-foreground/20 ${
+        className={`bg-muted border-muted-foreground/20 overflow-hidden rounded-lg border-2 border-dashed ${
           viewMode === "mobile" ? "mx-auto aspect-[9/16] max-w-sm" : "aspect-video"
         }`}
       >
@@ -78,7 +78,7 @@ export const WebsitePreview = ({
           />
         ) : (
           <div className="flex h-full w-full items-center justify-center p-8">
-            <div className="text-center text-muted-foreground">
+            <div className="text-muted-foreground text-center">
               <Monitor className="mx-auto mb-2 h-8 w-8" />
               <p className="text-sm font-medium">Preview Unavailable</p>
               <p className="text-xs">Screenshot could not be generated</p>
@@ -90,16 +90,14 @@ export const WebsitePreview = ({
       {/* Metadata */}
       {metadata && (
         <div className="space-y-2">
-          <h4 className="font-medium text-sm line-clamp-1">{metadata.title}</h4>
-          <p className="text-muted-foreground text-xs line-clamp-2 leading-relaxed">
-            {metadata.description}
-          </p>
+          <h4 className="line-clamp-1 text-sm font-medium">{metadata.title}</h4>
+          <p className="text-muted-foreground line-clamp-2 text-xs leading-relaxed">{metadata.description}</p>
         </div>
       )}
 
       {/* Action Buttons */}
       {type === "transformed" && (onOpenPreview || onDownload) && (
-        <div className="flex gap-2 pt-2 border-t">
+        <div className="flex gap-2 border-t pt-2">
           {onOpenPreview && (
             <Button variant="outline" size="sm" onClick={onOpenPreview} className="flex-1">
               <ExternalLink className="mr-2 h-4 w-4" />

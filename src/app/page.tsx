@@ -9,6 +9,9 @@ import { ResponsivePreview } from "@/components/preview/responsive-preview";
 import { WebsitePreview } from "@/components/preview/website-preview";
 import { Button } from "@/components/ui/button";
 import { ProgressIndicator } from "@/components/ui/progress-indicator";
+
+import InteractiveHero from "../components/hero-section-nexus";
+import { Compare } from "../components/ui/compare";
 import { callOpenAI } from "../lib/openAI";
 
 interface ScrapedData {
@@ -115,7 +118,7 @@ const HomePage = () => {
         updateProgressStep("render", "completed");
         updateProgressStep("complete", "completed");
         setTransformProgress(100);
-        
+
         // Auto-generate share URL for new transformation
         await generateNewShareUrl(result.data);
       } else {
@@ -151,133 +154,145 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
-      {/* Enhanced Header */}
-      <header className="border-b bg-white/80 backdrop-blur-sm sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                RebuildWeb
-              </h1>
-              <p className="text-slate-600 text-sm mt-1">
-                Transform any website into a modern masterpiece with AI
-              </p>
-            </div>
-            <div className="flex items-center gap-4">
-              <Button variant="outline" onClick={callOpenAI} className="hidden sm:flex">
-                View Examples
-              </Button>
-              {(scrapedData || transformedData) && (
-                <Button variant="outline" onClick={resetAppState}>
-                  Start New
-                </Button>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* URL Input Section */}
-          <div className="bg-white rounded-xl shadow-sm border p-6">
-            <UrlInput onDataScraped={handleDataScraped} onAnalyzeStart={resetAppState} />
-          </div>
-
-          {/* Progress Section */}
-          {(scrapedData || isTransforming) && (
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-                <ProgressIndicator steps={progressSteps} progress={transformProgress} />
-            </div>
-          )}
-
-          {/* Theme Selection */}
-          {scrapedData && !isTransforming && (
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-semibold">Choose Your Theme</h2>
-                <Button
-                  onClick={handleTransform}
-                  disabled={!selectedTheme}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
-                >
-                  Transform Website
-                </Button>
+    <>
+      <InteractiveHero />
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+        {/* Enhanced Header */}
+        <header className="sticky top-0 z-50 border-b bg-white/80 backdrop-blur-sm">
+          <div className="container mx-auto px-4 py-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h1 className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-3xl font-bold text-transparent">
+                  RebuildWeb
+                </h1>
+                <p className="mt-1 text-sm text-slate-600">Transform any website into a modern masterpiece with AI</p>
               </div>
-              <ThemeSelector isLoading={isTransforming} idPrefix="formURL" selectedTheme={selectedTheme} onThemeChange={setSelectedTheme} />
+              <div className="flex items-center gap-4">
+                <Button variant="outline" onClick={callOpenAI} className="hidden sm:flex">
+                  View Examples
+                </Button>
+                {(scrapedData || transformedData) && (
+                  <Button variant="outline" onClick={resetAppState}>
+                    Start New
+                  </Button>
+                )}
+              </div>
             </div>
-          )}
+          </div>
+        </header>
 
-          {/* Preview Section */}
-          {scrapedData && (
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Original Website Preview */}
-              <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                <div className="p-4 border-b bg-slate-50">
-                  <h3 className="font-semibold text-slate-800">Original Website</h3>
+        <main className="container mx-auto px-4 py-8">
+          <div className="mx-auto max-w-6xl space-y-8">
+            {/* URL Input Section */}
+            <div className="rounded-xl border bg-white p-6 shadow-sm">
+              <UrlInput onDataScraped={handleDataScraped} onAnalyzeStart={resetAppState} />
+            </div>
+
+            {/* Progress Section */}
+            {(scrapedData || isTransforming) && (
+              <div className="rounded-xl border bg-white p-6 shadow-sm">
+                <ProgressIndicator steps={progressSteps} progress={transformProgress} />
+              </div>
+            )}
+
+            {/* Theme Selection */}
+            {scrapedData && !isTransforming && (
+              <div className="rounded-xl border bg-white p-6 shadow-sm">
+                <div className="mb-4 flex items-center justify-between">
+                  <h2 className="text-xl font-semibold">Choose Your Theme</h2>
+                  <Button
+                    onClick={handleTransform}
+                    disabled={!selectedTheme}
+                    className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                  >
+                    Transform Website
+                  </Button>
                 </div>
-                <WebsitePreview
-                  title={scrapedData.metadata.title}
-                  screenshot={scrapedData.screenshot}
-                  type="original"
-                  metadata={{
-                    title: scrapedData.metadata.title,
-                    description: scrapedData.metadata.description,
-                  }}
+                <ThemeSelector
+                  isLoading={isTransforming}
+                  idPrefix="formURL"
+                  selectedTheme={selectedTheme}
+                  onThemeChange={setSelectedTheme}
                 />
               </div>
+            )}
 
-              {/* Transformed Website Preview */}
-              {transformedData && (
-                <div className="bg-white rounded-xl shadow-sm border overflow-hidden">
-                  <div className="p-4 border-b bg-gradient-to-r from-blue-50 to-purple-50">
-                    <h3 className="font-semibold text-slate-800">Transformed Website</h3>
+            {/* Preview Section */}
+            {scrapedData && (
+              <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                {/* Original Website Preview */}
+                <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+                  <div className="border-b bg-slate-50 p-4">
+                    <h3 className="font-semibold text-slate-800">Original Website</h3>
                   </div>
-                  <ResponsivePreview
-                    title={`${transformedData.theme} Theme`}
-                    type="transformed"
+                  <WebsitePreview
+                    title={scrapedData.metadata.title}
+                    screenshot={scrapedData.screenshot}
+                    type="original"
                     metadata={{
                       title: scrapedData.metadata.title,
-                      description: `Transformed with ${transformedData.theme} theme`,
+                      description: scrapedData.metadata.description,
                     }}
-                    html={transformedData.html}
                   />
                 </div>
-              )}
-            </div>
-          )}
 
-          {/* Export Controls */}
-          {transformedData && (
-            <div className="bg-white rounded-xl shadow-sm border">
-              <div className="p-4 border-b bg-gradient-to-r from-green-50 to-blue-50">
-                <h3 className="font-semibold text-slate-800">Export & Share</h3>
+                {/* Transformed Website Preview */}
+                {transformedData && (
+                  <div className="overflow-hidden rounded-xl border bg-white shadow-sm">
+                    <div className="border-b bg-gradient-to-r from-blue-50 to-purple-50 p-4">
+                      <h3 className="font-semibold text-slate-800">Transformed Website</h3>
+                    </div>
+                    <ResponsivePreview
+                      title={`${transformedData.theme} Theme`}
+                      type="transformed"
+                      metadata={{
+                        title: scrapedData.metadata.title,
+                        description: `Transformed with ${transformedData.theme} theme`,
+                      }}
+                      html={transformedData.html}
+                    />
+                    <Compare
+                      firstImage={scrapedData.screenshot}
+                      secondImage={transformedData.screenshot}
+                      firstImageClassName="object-cover object-left-top"
+                      secondImageClassname="object-cover object-left-top"
+                      className="h-[250px] w-[200px] md:h-[500px] md:w-[500px]"
+                      slideMode="hover"
+                    />
+                  </div>
+                )}
               </div>
-              <div className="p-6">
-                <ExportControls
-                  transformedData={transformedData}
-                  originalUrl={scrapedData?.url}
-                  shareUrl={shareUrl}
-                  onNewShareUrl={generateNewShareUrl}
-                />
-              </div>
-            </div>
-          )}
-        </div>
-      </main>
+            )}
 
-      {/* Enhanced Footer */}
-      <footer className="mt-16 border-t bg-slate-50">
-        <div className="container mx-auto px-4 py-8">
-          <div className="text-center text-slate-600">
-            <p className="text-sm">
-              Built with ❤️ using Next.js, Tailwind CSS, and AI
-            </p>
+            {/* Export Controls */}
+            {transformedData && (
+              <div className="rounded-xl border bg-white shadow-sm">
+                <div className="border-b bg-gradient-to-r from-green-50 to-blue-50 p-4">
+                  <h3 className="font-semibold text-slate-800">Export & Share</h3>
+                </div>
+                <div className="p-6">
+                  <ExportControls
+                    transformedData={transformedData}
+                    originalUrl={scrapedData?.url}
+                    shareUrl={shareUrl}
+                    onNewShareUrl={generateNewShareUrl}
+                  />
+                </div>
+              </div>
+            )}
           </div>
-        </div>
-      </footer>
-    </div>
+        </main>
+
+        {/* Enhanced Footer */}
+        <footer className="mt-16 border-t bg-slate-50">
+          <div className="container mx-auto px-4 py-8">
+            <div className="text-center text-slate-600">
+              <p className="text-sm">Built with ❤️ using Next.js, Tailwind CSS, and AI</p>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </>
   );
 };
 

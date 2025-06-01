@@ -55,7 +55,7 @@ export const UrlInput = ({ onDataScraped, onAnalyzeStart }: UrlInputProps) => {
 
     setIsValidating(true);
     setError(null);
-    
+
     // Reset app state when starting new analysis
     onAnalyzeStart?.();
 
@@ -95,20 +95,17 @@ export const UrlInput = ({ onDataScraped, onAnalyzeStart }: UrlInputProps) => {
               onChange={handleUrlChange}
               onKeyPress={handleKeyPress}
               className={`transition-colors ${
-                isValid === false ? "border-red-500 focus:border-red-500" : 
-                isValid === true ? "border-green-500 focus:border-green-500" : ""
+                isValid === false
+                  ? "border-red-500 focus:border-red-500"
+                  : isValid === true
+                    ? "border-green-500 focus:border-green-500"
+                    : ""
               }`}
               disabled={isValidating}
             />
-            {error && (
-              <p className="mt-1 text-xs text-red-600">{error}</p>
-            )}
+            {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
           </div>
-          <Button
-            onClick={handleAnalyze}
-            disabled={!isValid || isValidating}
-            className="min-w-[100px]"
-          >
+          <Button onClick={handleAnalyze} disabled={!isValid || isValidating} className="min-w-[100px]">
             {isValidating ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
