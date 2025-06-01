@@ -27,6 +27,8 @@ import {
   useScroll,
 } from "framer-motion";
 
+import { Compare } from "./ui/compare";
+
 function cn(...classes: (string | undefined | null | boolean)[]): string {
   return classes.filter(Boolean).join(" ");
 }
@@ -599,7 +601,6 @@ const InteractiveHero: React.FC = () => {
     RADIUS_BOOST,
     BASE_OPACITY_MIN,
     BASE_OPACITY_MAX,
-    BASE_RADIUS,
   ]);
 
   useEffect(() => {
@@ -1094,19 +1095,15 @@ const InteractiveHero: React.FC = () => {
           </div>
         </motion.div>
 
-        <motion.div
-          variants={imageVariants}
-          initial="hidden"
-          animate="visible"
-          className="mx-auto w-full max-w-4xl px-4 sm:px-0"
-        >
-          <img
-            src="https://help.apple.com/assets/679AD2D1E874AD22770DE1E0/679AD2D56EA7B10C9E01288F/en_US/3d2b57c8027ae355aa44421899389008.png"
-            alt="Product screen preview showing collaborative features"
-            width={1024}
-            height={640}
-            className="h-auto w-full rounded-lg border border-gray-700/50 object-contain shadow-xl"
-            loading="lazy"
+        <motion.div variants={imageVariants} initial="hidden" animate="visible">
+          <Compare
+            firstImage="https://assets.aceternity.com/code-problem.png"
+            secondImage="https://assets.aceternity.com/code-solution.png"
+            firstImageClassName="object-cover object-left-top"
+            secondImageClassname="object-cover object-left-top"
+            className="relative h-[250px] w-[400px] overflow-hidden rounded-lg shadow-lg md:h-[350px] md:w-[500px]"
+            slideMode="hover"
+            showHandlebar={true}
           />
         </motion.div>
       </main>
