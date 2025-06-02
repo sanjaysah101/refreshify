@@ -4,6 +4,8 @@ export interface PreviewData {
   html: string;
   theme: string;
   originalUrl: string;
+  originalScreenshot: string;
+  transformedScreenshot: string;
   createdAt: string;
 }
 
@@ -40,6 +42,8 @@ class PreviewStorage {
         html: data.html,
         theme: data.theme,
         originalUrl: data.originalUrl,
+        originalScreenshot: data.originalScreenshot,
+        transformedScreenshot: data.transformedScreenshot,
         updatedAt: new Date(),
       },
       create: {
@@ -47,6 +51,8 @@ class PreviewStorage {
         html: data.html,
         theme: data.theme,
         originalUrl: data.originalUrl,
+        originalScreenshot: data.originalScreenshot,
+        transformedScreenshot: data.transformedScreenshot,
       },
     });
   }
@@ -63,7 +69,24 @@ class PreviewStorage {
       theme: result.theme,
       originalUrl: result.originalUrl,
       createdAt: result.createdAt.toISOString(),
+      originalScreenshot: result.originalScreenshot,
+      transformedScreenshot: result.transformedScreenshot,
     };
+  }
+
+  public async getAll(): Promise<(PreviewData & { previewId: string })[]> {
+    const results = await this.prisma.previewData.findMany({
+      orderBy: { createdAt: "desc" },
+    });
+    return results.map((result) => ({
+      html: result.html,
+      theme: result.theme,
+      originalUrl: result.originalUrl,
+      createdAt: result.createdAt.toISOString(),
+      previewId: result.previewId,
+      originalScreenshot: result.originalScreenshot,
+      transformedScreenshot: result.transformedScreenshot,
+    }));
   }
 
   public async has(id: string): Promise<boolean> {

@@ -9,13 +9,15 @@ datasource db {
 }
 
 model PreviewData {
-  id          String   @id @default(auto()) @map("_id") @db.ObjectId
-  previewId   String   @unique
-  html        String
-  theme       String
-  originalUrl String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id                String   @id @default(auto()) @map("_id") @db.ObjectId
+  previewId         String   @unique
+  html              String
+  theme             String
+  originalUrl       String
+  originalScreenshot String   // old screenshot
+  transformedScreenshot String // new screenshot
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
   @@map("preview_data")
 }
