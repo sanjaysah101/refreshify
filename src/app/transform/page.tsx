@@ -177,23 +177,13 @@ const TransformPage = () => {
                   </h3>
                 </div>
                 <div className="p-4">
-                  <ResponsivePreview
-                    // title={`${transformedData.theme} Theme`}
-                    type="transformed"
-                    // metadata={{
-                    //   title: scrapedData.metadata.title,
-                    //   description: `Transformed with ${transformedData.theme} theme`,
-                    // }}
-                    // html={transformedData.html}
-                    // screenshot={transformedData.screenshot}
-                    {...scrapedData}
-                  />
+                  <ResponsivePreview type="transformed" {...scrapedData} />
                   <div className="mt-6 flex justify-center">
                     <div className="relative">
                       <div className="absolute -inset-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-20 blur" />
                       <Compare
-                        firstImage={scrapedData.screenshot}
-                        secondImage={transformedData.transformedScreenshot}
+                        firstImage={transformedData.transformedScreenshot}
+                        secondImage={scrapedData.screenshot}
                         firstImageClassName="object-cover object-left-top"
                         secondImageClassname="object-cover object-left-top"
                         className="relative h-[250px] w-[400px] overflow-hidden rounded-lg shadow-lg md:h-[350px] md:w-[500px]"

@@ -635,8 +635,8 @@ const InteractiveHero: React.FC = () => {
 
         <motion.div variants={imageVariants} initial="hidden" animate="visible">
           <Compare
-            firstImage="https://assets.aceternity.com/code-problem.png"
-            secondImage="https://assets.aceternity.com/code-solution.png"
+            firstImage="/new.png"
+            secondImage="/old.png"
             firstImageClassName="object-cover object-left-top"
             secondImageClassname="object-cover object-left-top"
             className="relative h-[250px] w-[400px] overflow-hidden rounded-lg shadow-lg md:h-[350px] md:w-[500px]"

@@ -55,6 +55,9 @@ export const Footer = () => {
             <span className="text-red-500">❤️</span>
             <span>using Next.js, Tailwind CSS, and AI</span>
           </div>
+          <div className="mt-4 text-sm text-gray-300">
+            <span>© 2023 Refreshify. All rights reserved.</span>
+          </div>
           <div className="mt-4 flex justify-center gap-4">
             {["Next.Js 15", "Tailwind CSS v4", "AI Powered"].map((feature) => (
               <ShinyText
