@@ -32,7 +32,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
   }
 
   // Add sharing meta tags and analytics
-  const enhancedHtml = addPreviewEnhancements(previewData.html, previewData);
+  const enhancedHtml = addPreviewEnhancements(previewData.transformedHtml, previewData);
 
   return new NextResponse(enhancedHtml, {
     headers: {

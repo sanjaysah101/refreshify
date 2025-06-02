@@ -177,7 +177,16 @@ const TransformPage = () => {
                   </h3>
                 </div>
                 <div className="p-4">
-                  <ResponsivePreview type="transformed" {...scrapedData} />
+                  <ResponsivePreview
+                    type="transformed"
+                    extractedAt={transformedData.transformedAt}
+                    html={transformedData.transformedHtml}
+                    screenshot={transformedData.transformedScreenshot}
+                    metadata={scrapedData.metadata}
+                    structure={scrapedData.structure}
+                    styles={scrapedData.styles}
+                    url={scrapedData.url}
+                  />
                   <div className="mt-6 flex justify-center">
                     <div className="relative">
                       <div className="absolute -inset-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-20 blur" />

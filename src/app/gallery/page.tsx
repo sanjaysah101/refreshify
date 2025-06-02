@@ -44,7 +44,7 @@ export default function GalleryPage() {
             <div>
               <strong>Created:</strong> {new Date(preview.createdAt).toLocaleString()}
             </div>
-            <Compare firstImage={preview.screenshot} secondImage={preview.transformedScreenshot} className="my-2" />
+            <Compare secondImage={preview.screenshot} firstImage={preview.transformedScreenshot} className="my-2" />
           </div>
         ))}
       </div>
