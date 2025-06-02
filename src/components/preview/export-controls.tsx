@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 "use client";
 
 import { useState } from "react";
@@ -11,6 +10,8 @@ import { Input } from "@/components/ui/input";
 
 import { TransformedData } from "../../lib/types";
 import { ShinyText } from "../ui/shiny-text";
+
+/* eslint-disable no-console */
 
 interface ExportControlsProps {
   transformedData: TransformedData;

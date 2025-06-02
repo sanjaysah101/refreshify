@@ -135,11 +135,6 @@ export const Navbar: React.FC = () => {
           <span className="ml-2 text-xl font-bold text-white">Refreshify</span>
         </NavLink>
 
-        <div className="hidden flex-grow items-center justify-center space-x-6 px-4 md:flex lg:space-x-8">
-          <NavLink href="#">Product</NavLink>
-          <NavLink href="#">Customers</NavLink>
-        </div>
-
         <div className="flex flex-shrink-0 items-center space-x-4 lg:space-x-6">
           <Tooltip>
             <TooltipTrigger>
@@ -153,13 +148,13 @@ export const Navbar: React.FC = () => {
           </Tooltip>
 
           <motion.a
-            href="/examples"
+            href="/gallery"
             className="hover:bg-opacity-90 rounded-md bg-[#0CF2A0] px-4 py-[6px] text-sm font-semibold whitespace-nowrap text-[#111111] shadow-sm transition-colors duration-200 hover:shadow-md"
             whileHover={{ scale: 1.03, y: -1 }}
             whileTap={{ scale: 0.97 }}
             transition={{ type: "spring", stiffness: 400, damping: 15 }}
           >
-            View Example
+            View Gallery
           </motion.a>
 
           <motion.button
@@ -185,12 +180,6 @@ export const Navbar: React.FC = () => {
             className="absolute top-full right-0 left-0 border-t border-gray-800/50 bg-[#111111]/95 py-4 shadow-lg backdrop-blur-sm md:hidden"
           >
             <div className="flex flex-col items-center space-y-4 px-6">
-              <NavLink href="#" onClick={() => setIsMobileMenuOpen(false)}>
-                Product
-              </NavLink>
-              <NavLink href="#" onClick={() => setIsMobileMenuOpen(false)}>
-                Customers
-              </NavLink>
               <hr className="my-2 w-full border-t border-gray-700/50" />
               <NavLink href="/examples" onClick={() => setIsMobileMenuOpen(false)}>
                 View Example

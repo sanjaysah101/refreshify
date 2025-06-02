@@ -26,7 +26,7 @@ export default function GalleryPage() {
 
   return (
     <div className="container">
-      <h1>Transformed Websites Gallery</h1>
+      <h1 className="mb-4 text-xl">Transformed Websites Gallery</h1>
       <div className="flex flex-wrap gap-4">
         {previews.map((preview) => (
           <div
