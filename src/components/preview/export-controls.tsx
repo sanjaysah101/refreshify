@@ -4,10 +4,11 @@ import { useState } from "react";
 
 import { Check, Copy, Download, ExternalLink, RefreshCw, Share } from "lucide-react";
 
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+
+import { ShinyText } from "../ui/shiny-text";
 
 interface ExportControlsProps {
   transformedData?: {
@@ -101,7 +102,7 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
   if (!transformedData) {
     return (
       <Card className="p-4 opacity-50">
-        <div className="text-muted-foreground text-center">
+        <div className="text-center text-gray-300">
           <Download className="mx-auto mb-2 h-8 w-8" />
           <p className="text-sm">Transform a website to enable export options</p>
         </div>
@@ -118,7 +119,7 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
           Download Files
         </h4>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
-          <Button variant="outline" size="sm" onClick={handleDownloadHTML} className="flex items-center gap-2">
+          <Button size="sm" onClick={handleDownloadHTML} className="flex items-center gap-2">
             <Download className="h-4 w-4" />
             HTML File
           </Button>
@@ -155,7 +156,7 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
         {shareUrl ? (
           <div className="space-y-2">
             <div className="flex gap-2">
-              <Input value={shareUrl} readOnly className="flex-1 font-mono text-sm" />
+              <Input value={shareUrl} readOnly className="flex-1 border-[#167252] font-mono text-sm" />
               <Button
                 variant="outline"
                 size="sm"
@@ -179,19 +180,20 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
                 Open
               </Button>
             </div>
-            <p className="text-muted-foreground text-xs">Share this URL to let others view your transformed website</p>
+            <p className="text-xs text-gray-300">Share this URL to let others view your transformed website</p>
           </div>
         ) : (
-          <p className="text-muted-foreground text-sm">Share URL will be generated automatically</p>
+          <p className="text-sm text-gray-300">Share URL will be generated automatically</p>
         )}
       </div>
 
       {/* Theme Badge */}
-      <div className="flex items-center justify-between border-t pt-4">
-        <span className="text-muted-foreground text-sm">Applied Theme:</span>
-        <Badge variant="outline" className="bg-gradient-to-r from-blue-50 to-purple-50">
-          {transformedData.theme}
-        </Badge>
+      <div className="flex items-center justify-between border-0 border-t border-gray-700 pt-4">
+        <span className="text-sm text-gray-300">Applied Theme:</span>
+        <ShinyText
+          text={transformedData.theme}
+          className="cursor-pointer rounded-full border border-gray-700 bg-[#1a1a1a] px-3 py-0.5 text-xs font-medium text-[#0CF2A0] transition-colors hover:border-[#0CF2A0]/50 sm:text-sm"
+        />
       </div>
     </div>
   );

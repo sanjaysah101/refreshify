@@ -120,7 +120,7 @@ export const Navbar: React.FC = () => {
       className="sticky top-0 z-30 w-full border-b px-6 backdrop-blur-md md:px-10 lg:px-16"
     >
       <nav className="mx-auto flex h-[70px] max-w-screen-xl items-center justify-between">
-        <div className="flex flex-shrink-0 items-center">
+        <NavLink href="/" className="flex flex-shrink-0 items-center">
           <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path
               d="M12 2L2 7L12 12L22 7L12 2Z"
@@ -133,7 +133,7 @@ export const Navbar: React.FC = () => {
             <path d="M2 12L12 17L22 12" stroke="#0CF2A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
           <span className="ml-2 text-xl font-bold text-white">Refreshify</span>
-        </div>
+        </NavLink>
 
         <div className="hidden flex-grow items-center justify-center space-x-6 px-4 md:flex lg:space-x-8">
           <NavLink href="#">Product</NavLink>

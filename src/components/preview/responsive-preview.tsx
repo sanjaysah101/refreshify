@@ -8,6 +8,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 
+/* eslint-disable @next/next/no-img-element */
+
 interface ResponsivePreviewProps {
   title: string;
   screenshot?: string;
@@ -50,7 +52,7 @@ export const ResponsivePreview = ({ title, screenshot, type, metadata, html }: R
         </div>
 
         {/* Viewport Controls */}
-        {type === "transformed" && html && (
+        {html && (
           <div className="flex items-center gap-2">
             <div className="flex rounded-lg border p-1">
               {Object.entries(viewportSizes).map(([key, config]) => {
@@ -70,7 +72,7 @@ export const ResponsivePreview = ({ title, screenshot, type, metadata, html }: R
               })}
             </div>
 
-            <Button variant={showLive ? "default" : "outline"} size="sm" onClick={() => setShowLive(!showLive)}>
+            <Button variant={showLive ? "default" : "default"} size="sm" onClick={() => setShowLive(!showLive)}>
               {showLive ? "Screenshot" : "Live Preview"}
             </Button>
           </div>
@@ -78,10 +80,10 @@ export const ResponsivePreview = ({ title, screenshot, type, metadata, html }: R
 
         {/* Preview Area */}
         <div className="bg-muted overflow-hidden rounded-lg" style={{ height: "600px" }}>
-          {type === "transformed" && html && showLive ? (
-            <div className="flex h-full justify-center bg-white">
+          {html && showLive ? (
+            <div className="flex h-full justify-center">
               <div
-                className="overflow-auto border-x border-gray-300 bg-white"
+                className="overflow-auto border-x border-gray-300"
                 style={{
                   width: currentViewport.width,
                   maxWidth: "100%",

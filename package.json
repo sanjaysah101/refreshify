@@ -24,6 +24,7 @@
     "@radix-ui/react-select": "^2.2.5",
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
+    "@react-three/fiber": "9.0.0-alpha.8",
     "@tsparticles/engine": "^3.8.1",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
@@ -38,7 +39,8 @@
     "puppeteer": "^24.9.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
-    "tailwind-merge": "^3.3.0"
+    "tailwind-merge": "^3.3.0",
+    "three": "^0.177.0"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
@@ -48,6 +50,7 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "@types/three": "^0.176.0",
     "eslint": "^9",
     "eslint-config-next": "15.3.2",
     "eslint-config-prettier": "^10.1.5",

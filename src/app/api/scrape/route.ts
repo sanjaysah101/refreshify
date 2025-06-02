@@ -31,8 +31,8 @@ export async function POST(request: NextRequest) {
 
     const metadata = {
       title: $("title").text() || "",
-      description: $('meta[name="description"]').attr("content") || "",
-      keywords: $('meta[name="keywords"]').attr("content")?.split(",") || [],
+      description: $("meta[name=\"description\"]").attr("content") || "",
+      keywords: $("meta[name=\"keywords\"]").attr("content")?.split(",") || [],
       language: $("html").attr("lang") || "en",
     };
 
@@ -53,6 +53,7 @@ export async function POST(request: NextRequest) {
         structure,
         styles,
         extractedAt: new Date().toISOString(),
+        originalHTML: content,
       },
     });
   } catch (error) {
