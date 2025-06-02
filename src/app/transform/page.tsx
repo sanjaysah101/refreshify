@@ -1,7 +1,7 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 
 import { THEME_OPTIONS, ThemeSelector } from "@/components/forms/theme-selector";
 import { UrlInput } from "@/components/forms/url-input";
@@ -22,7 +22,7 @@ import { Card } from "../../components/ui/card";
 import { Compare } from "../../components/ui/compare";
 import { ShinyText } from "../../components/ui/shiny-text";
 
-const HomePage = () => {
+const TransformPage = () => {
   const [scrapedData, setScrapedData] = useState<ScrapedData | null>(null);
   const [selectedTheme, setSelectedTheme] = useState<string>(THEME_OPTIONS[0].value);
   const [isTransforming, setIsTransforming] = useState(false);
@@ -229,4 +229,20 @@ const HomePage = () => {
   );
 };
 
-export default HomePage;
+function SearchBarFallback() {
+  return (
+    <div className="container flex max-h-full max-w-full items-center justify-center">
+      <span className="animate-pulse">loading...</span>
+    </div>
+  );
+}
+
+const TransformPageWrapper = () => {
+  return (
+    <Suspense fallback={<SearchBarFallback />}>
+      <TransformPage />
+    </Suspense>
+  );
+};
+
+export default TransformPageWrapper;
