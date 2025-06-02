@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 
-import { THEME_OPTIONS, ThemeSelector } from "@/components/forms/theme-selector";
+import { InteractiveHero } from "@/components/hero-section-nexus";
+import { ThemeSelector } from "@/components/forms/theme-selector";
 import { UrlInput } from "@/components/forms/url-input";
 import { ExportControls } from "@/components/preview/export-controls";
 import { ResponsivePreview } from "@/components/preview/responsive-preview";
@@ -33,7 +34,7 @@ interface ProgressStep {
 
 const HomePage = () => {
   const [scrapedData, setScrapedData] = useState<ScrapedData | null>(null);
-  const [selectedTheme, setSelectedTheme] = useState<string>(THEME_OPTIONS[0].value);
+  const [selectedTheme, setSelectedTheme] = useState<string>("Default (AI's Best Guess)");
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformedData, setTransformedData] = useState<any>(null);
   const [transformProgress, setTransformProgress] = useState(0);
@@ -113,43 +114,24 @@ const HomePage = () => {
   };
 
   return (
-    <div className="from-background to-muted min-h-screen bg-gradient-to-br">
-      {/* Header */}
-      <header className="bg-background/80 border-b backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-foreground text-2xl font-bold">RebuildWeb</h1>
-              <p className="text-muted-foreground text-sm">Transform any website into a modern masterpiece</p>
-            </div>
-            <Button variant="outline">View Examples</Button>
-          </div>
-        </div>
-      </header>
+    <div className="min-h-screen bg-[#111111]">
+      <InteractiveHero />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
         <div className="mx-auto max-w-6xl">
-          {/* Hero Section */}
-          <div className="mb-12 text-center">
-            <h2 className="text-foreground mb-4 text-4xl font-bold">Modernize Any Website in Minutes</h2>
-            <p className="text-muted-foreground mx-auto mb-8 max-w-2xl text-lg">
-              Enter any URL and watch as our AI transforms outdated websites into beautiful, modern, responsive designs.
-            </p>
-          </div>
-
           {/* Transformation Form */}
-          <div className="bg-card mb-8 rounded-lg border p-8 shadow-lg">
+          <div className="bg-card mb-8 rounded-lg border border-gray-800 p-8 shadow-lg">
             <div className="space-y-6">
               <div>
-                <h3 className="mb-4 text-xl font-semibold">Start Your Transformation</h3>
+                <h3 className="mb-4 text-xl font-semibold text-gray-200">Start Your Transformation</h3>
                 <UrlInput onDataScraped={handleDataScraped} />
               </div>
 
               {scrapedData && (
                 <>
                   <div>
-                    <h4 className="mb-3 text-lg font-medium">Choose Your Theme</h4>
+                    <h4 className="mb-3 text-lg font-medium text-gray-300">Choose Your Theme</h4>
                     <ThemeSelector
                       isLoading={isTransforming}
                       idPrefix="urlForm"
@@ -206,35 +188,6 @@ const HomePage = () => {
               <ExportControls transformedData={transformedData} originalUrl={scrapedData?.url} />
             </div>
           )}
-
-          {/* Features Grid */}
-          <div className="mt-16 grid gap-6 md:grid-cols-3">
-            <div className="p-6 text-center">
-              <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-                <span className="text-2xl">🎨</span>
-              </div>
-              <h3 className="mb-2 font-semibold">Multiple Themes</h3>
-              <p className="text-muted-foreground text-sm">
-                Choose from Classic, Modern, Morphism, and Animated themes
-              </p>
-            </div>
-
-            <div className="p-6 text-center">
-              <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-                <span className="text-2xl">📱</span>
-              </div>
-              <h3 className="mb-2 font-semibold">Fully Responsive</h3>
-              <p className="text-muted-foreground text-sm">All transformations are mobile-first and responsive</p>
-            </div>
-
-            <div className="p-6 text-center">
-              <div className="bg-primary/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-lg">
-                <span className="text-2xl">⚡</span>
-              </div>
-              <h3 className="mb-2 font-semibold">Lightning Fast</h3>
-              <p className="text-muted-foreground text-sm">Get your transformed website in under 60 seconds</p>
-            </div>
-          </div>
         </div>
       </main>
     </div>
