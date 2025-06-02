@@ -12,4 +12,5 @@ export const callOpenAI = async () => {
   });
 
   console.log(response.output_text);
+  return response.output_text;
 };

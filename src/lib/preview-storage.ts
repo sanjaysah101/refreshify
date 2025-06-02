@@ -1,13 +1,5 @@
 import { PrismaClient } from "../generated/prisma";
-
-export interface PreviewData {
-  html: string;
-  theme: string;
-  originalUrl: string;
-  originalScreenshot: string;
-  transformedScreenshot: string;
-  createdAt: string;
-}
+import { PreviewData } from "./types";
 
 class PreviewStorage {
   private static instance: PreviewStorage;
@@ -25,7 +17,6 @@ class PreviewStorage {
   }
 
   public async set(id: string, data: PreviewData): Promise<void> {
-    // Clean up old previews (older than 1 hour)
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
     await this.prisma.previewData.deleteMany({
       where: {
@@ -35,24 +26,45 @@ class PreviewStorage {
       },
     });
 
-    // Upsert the new preview data
     await this.prisma.previewData.upsert({
       where: { previewId: id },
       update: {
+        url: data.url,
+        screenshot: data.screenshot,
+        metadata: {
+          title: data.metadata.title,
+          description: data.metadata.description,
+          keywords: data.metadata.keywords,
+          language: data.metadata.language,
+        },
+        structure: data.structure,
+        styles: data.styles,
+        extractedAt: new Date(data.extractedAt),
         html: data.html,
-        theme: data.theme,
-        originalUrl: data.originalUrl,
-        originalScreenshot: data.originalScreenshot,
+        transformedHtml: data.transformedHtml,
         transformedScreenshot: data.transformedScreenshot,
+        theme: data.theme,
+        transformedAt: new Date(data.transformedAt),
         updatedAt: new Date(),
       },
       create: {
         previewId: id,
+        url: data.url,
+        screenshot: data.screenshot,
+        metadata: {
+          title: data.metadata.title,
+          description: data.metadata.description,
+          keywords: data.metadata.keywords,
+          language: data.metadata.language,
+        },
+        structure: data.structure,
+        styles: data.styles,
+        extractedAt: new Date(data.extractedAt),
         html: data.html,
-        theme: data.theme,
-        originalUrl: data.originalUrl,
-        originalScreenshot: data.originalScreenshot,
+        transformedHtml: data.transformedHtml,
         transformedScreenshot: data.transformedScreenshot,
+        theme: data.theme,
+        transformedAt: new Date(data.transformedAt),
       },
     });
   }
@@ -65,12 +77,22 @@ class PreviewStorage {
     if (!result) return null;
 
     return {
+      url: result.url,
+      screenshot: result.screenshot,
+      metadata: {
+        title: result.metadata.title,
+        description: result.metadata.description,
+        keywords: result.metadata.keywords,
+        language: result.metadata.language,
+      },
+      structure: result.structure,
+      styles: result.styles,
+      extractedAt: result.extractedAt.toISOString(),
       html: result.html,
-      theme: result.theme,
-      originalUrl: result.originalUrl,
-      createdAt: result.createdAt.toISOString(),
-      originalScreenshot: result.originalScreenshot,
+      transformedHtml: result.transformedHtml,
       transformedScreenshot: result.transformedScreenshot,
+      theme: result.theme,
+      transformedAt: result.transformedAt.toISOString(),
     };
   }
 
@@ -78,14 +100,25 @@ class PreviewStorage {
     const results = await this.prisma.previewData.findMany({
       orderBy: { createdAt: "desc" },
     });
+
     return results.map((result) => ({
-      html: result.html,
-      theme: result.theme,
-      originalUrl: result.originalUrl,
-      createdAt: result.createdAt.toISOString(),
       previewId: result.previewId,
-      originalScreenshot: result.originalScreenshot,
+      url: result.url,
+      screenshot: result.screenshot,
+      metadata: {
+        title: result.metadata.title,
+        description: result.metadata.description,
+        keywords: result.metadata.keywords,
+        language: result.metadata.language,
+      },
+      structure: result.structure,
+      styles: result.styles,
+      extractedAt: result.extractedAt.toISOString(),
+      html: result.html,
+      transformedHtml: result.transformedHtml,
       transformedScreenshot: result.transformedScreenshot,
+      theme: result.theme,
+      transformedAt: result.transformedAt.toISOString(),
     }));
   }
 

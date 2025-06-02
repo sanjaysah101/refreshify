@@ -1,7 +1,10 @@
+/* eslint-disable quotes */
 import { NextRequest, NextResponse } from "next/server";
 
 import * as cheerio from "cheerio";
 import puppeteer from "puppeteer";
+
+import { ScrapedData } from "@/lib/types";
 
 export async function POST(request: NextRequest) {
   try {
@@ -31,8 +34,8 @@ export async function POST(request: NextRequest) {
 
     const metadata = {
       title: $("title").text() || "",
-      description: $("meta[name=\"description\"]").attr("content") || "",
-      keywords: $("meta[name=\"keywords\"]").attr("content")?.split(",") || [],
+      description: $('meta[name="description"]').attr("content") || "",
+      keywords: $('meta[name="keywords"]').attr("content")?.split(",") || [],
       language: $("html").attr("lang") || "en",
     };
 
@@ -44,20 +47,20 @@ export async function POST(request: NextRequest) {
       footer: extractFooter($),
     };
 
+    const data: ScrapedData = {
+      url,
+      screenshot: `data:image/png;base64,${screenshot}`,
+      metadata,
+      structure,
+      styles,
+      extractedAt: new Date().toISOString(),
+      html: content,
+    };
     return NextResponse.json({
       success: true,
-      data: {
-        url,
-        screenshot: `data:image/png;base64,${screenshot}`,
-        metadata,
-        structure,
-        styles,
-        extractedAt: new Date().toISOString(),
-        originalHTML: content,
-      },
+      data,
     });
-  } catch (error) {
-    console.error("Scraping error:", error);
+  } catch {
     return NextResponse.json({ error: "Failed to scrape website" }, { status: 500 });
   }
 }
@@ -293,8 +296,7 @@ async function extractStyles(page: any) {
         },
       };
     });
-  } catch (error) {
-    console.error("Error extracting styles:", error);
+  } catch {
     return {
       colors: {
         primary: "#000000",

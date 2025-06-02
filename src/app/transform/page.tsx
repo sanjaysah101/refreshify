@@ -9,66 +9,24 @@ import { ExportControls } from "@/components/preview/export-controls";
 import { ResponsivePreview } from "@/components/preview/responsive-preview";
 import { Badge } from "@/components/ui/badge";
 import { ProgressIndicator } from "@/components/ui/progress-indicator";
+import {
+  PreviewData,
+  ProgressStatus,
+  ProgressStep,
+  ScrapedData,
+  TransformedData,
+  initialProgressSteps,
+} from "@/lib/types";
 
 import { Card } from "../../components/ui/card";
 import { Compare } from "../../components/ui/compare";
 import { ShinyText } from "../../components/ui/shiny-text";
 
-interface ScrapedData {
-  url: string;
-  screenshot: string;
-  metadata: {
-    title: string;
-    description: string;
-    keywords: string[];
-    language: string;
-  };
-  structure: any;
-  styles: any;
-  extractedAt: string;
-  originalHTML: string;
-}
-
-type ProgressStatus = "pending" | "active" | "completed" | "error";
-interface ProgressStep {
-  id: string;
-  label: string;
-  status: ProgressStatus;
-  description: string;
-}
-
-const initialProgressSteps: ProgressStep[] = [
-  {
-    id: "scrape",
-    label: "Analyzing Website",
-    status: "pending",
-    description: "Extracting content and structure",
-  },
-  {
-    id: "transform",
-    label: "Applying Theme",
-    status: "pending",
-    description: "Generating modern design",
-  },
-  {
-    id: "render",
-    label: "Creating Preview",
-    status: "pending",
-    description: "Rendering final result",
-  },
-  {
-    id: "complete",
-    label: "Ready!",
-    status: "pending",
-    description: "Transformation complete",
-  },
-];
-
 const HomePage = () => {
   const [scrapedData, setScrapedData] = useState<ScrapedData | null>(null);
   const [selectedTheme, setSelectedTheme] = useState<string>(THEME_OPTIONS[0].value);
   const [isTransforming, setIsTransforming] = useState(false);
-  const [transformedData, setTransformedData] = useState<any>(null);
+  const [transformedData, setTransformedData] = useState<TransformedData | null>(null);
   const [transformProgress, setTransformProgress] = useState(0);
   const [progressSteps, setProgressSteps] = useState<ProgressStep[]>(initialProgressSteps);
   const [shareUrl, setShareUrl] = useState<string>("");
@@ -136,6 +94,7 @@ const HomePage = () => {
         updateProgressStep("transform", "error");
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Transform error:", error);
       updateProgressStep("transform", "error");
     } finally {
@@ -143,16 +102,12 @@ const HomePage = () => {
     }
   };
 
-  const generateNewShareUrl = async (data: any) => {
+  const generateNewShareUrl = async (data: PreviewData) => {
     try {
       const response = await fetch("/api/preview", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          html: data.html,
-          theme: data.theme,
-          originalUrl: scrapedData?.url || "",
-        }),
+        body: JSON.stringify(data),
       });
 
       const result = await response.json();
@@ -160,7 +115,14 @@ const HomePage = () => {
         setShareUrl(result.previewUrl);
       }
     } catch (error) {
+      // eslint-disable-next-line no-console
       console.error("Failed to generate share URL:", error);
+    }
+  };
+
+  const handleNewShareUrl = async (data: TransformedData) => {
+    if (scrapedData) {
+      generateNewShareUrl({ ...data, ...scrapedData });
     }
   };
 
@@ -195,16 +157,7 @@ const HomePage = () => {
                 </h3>
               </div>
               <div className="p-4">
-                <ResponsivePreview
-                  title={scrapedData.metadata.title}
-                  screenshot={scrapedData.screenshot}
-                  type="original"
-                  metadata={{
-                    title: scrapedData.metadata.title,
-                    description: scrapedData.metadata.description,
-                  }}
-                  html={scrapedData.originalHTML}
-                />
+                <ResponsivePreview type="original" {...scrapedData} />
               </div>
             </div>
           </div>
@@ -225,21 +178,22 @@ const HomePage = () => {
                 </div>
                 <div className="p-4">
                   <ResponsivePreview
-                    title={`${transformedData.theme} Theme`}
+                    // title={`${transformedData.theme} Theme`}
                     type="transformed"
-                    metadata={{
-                      title: scrapedData.metadata.title,
-                      description: `Transformed with ${transformedData.theme} theme`,
-                    }}
-                    html={transformedData.html}
-                    screenshot={transformedData.screenshot}
+                    // metadata={{
+                    //   title: scrapedData.metadata.title,
+                    //   description: `Transformed with ${transformedData.theme} theme`,
+                    // }}
+                    // html={transformedData.html}
+                    // screenshot={transformedData.screenshot}
+                    {...scrapedData}
                   />
                   <div className="mt-6 flex justify-center">
                     <div className="relative">
                       <div className="absolute -inset-2 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 opacity-20 blur" />
                       <Compare
                         firstImage={scrapedData.screenshot}
-                        secondImage={transformedData.screenshot}
+                        secondImage={transformedData.transformedScreenshot}
                         firstImageClassName="object-cover object-left-top"
                         secondImageClassname="object-cover object-left-top"
                         className="relative h-[250px] w-[400px] overflow-hidden rounded-lg shadow-lg md:h-[350px] md:w-[500px]"
@@ -268,12 +222,7 @@ const HomePage = () => {
               />
             </h3>
           </div>
-          <ExportControls
-            transformedData={transformedData}
-            originalUrl={scrapedData?.url}
-            shareUrl={shareUrl}
-            onNewShareUrl={generateNewShareUrl}
-          />
+          <ExportControls transformedData={transformedData} shareUrl={shareUrl} onNewShareUrl={handleNewShareUrl} />
         </Card>
       )}
     </div>

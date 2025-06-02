@@ -4,6 +4,8 @@ import puppeteer from "puppeteer";
 
 import { analyzeAndModernizeUrl } from "@/lib/geminiService";
 
+import { TransformedData } from "../../../lib/types";
+
 export async function POST(request: NextRequest) {
   try {
     const { scrapedData, theme } = await request.json();
@@ -18,17 +20,19 @@ export async function POST(request: NextRequest) {
 
     // Create screenshot of transformed version
     const screenshot = await generateTransformedScreenshot(transformedHtml);
+    const data: TransformedData = {
+      transformedHtml,
+      transformedScreenshot: `data:image/png;base64,${screenshot}`,
+      theme,
+      transformedAt: new Date().toISOString(),
+    };
 
     return NextResponse.json({
       success: true,
-      data: {
-        html: transformedHtml,
-        screenshot: `data:image/png;base64,${screenshot}`,
-        theme,
-        transformedAt: new Date().toISOString(),
-      },
+      data,
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Transform error:", error);
     return NextResponse.json({ error: "Failed to transform website" }, { status: 500 });
   }

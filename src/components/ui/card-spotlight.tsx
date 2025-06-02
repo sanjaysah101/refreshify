@@ -21,7 +21,7 @@ export const CardSpotlight = ({
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
   function handleMouseMove({ currentTarget, clientX, clientY }: ReactMouseEvent<HTMLDivElement>) {
-    let { left, top } = currentTarget.getBoundingClientRect();
+    const { left, top } = currentTarget.getBoundingClientRect();
 
     mouseX.set(clientX - left);
     mouseY.set(clientY - top);
@@ -32,6 +32,7 @@ export const CardSpotlight = ({
   const handleMouseLeave = () => setIsHovering(false);
   return (
     <div
+      role="presentation"
       className={cn(
         "group/spotlight relative rounded-md border border-neutral-800 bg-black p-10 dark:border-neutral-800",
         className

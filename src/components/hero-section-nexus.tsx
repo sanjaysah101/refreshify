@@ -70,7 +70,7 @@ interface NavLinkProps {
   children: ReactNode;
   hasDropdown?: boolean;
   className?: string;
-  onClick?: (event: ReactMouseEvent<HTMLAnchorElement>) => void;
+  onClick?: (_event: ReactMouseEvent<HTMLAnchorElement>) => void;
 }
 
 const NavLink: React.FC<NavLinkProps> = ({ href = "#", children, hasDropdown = false, className = "", onClick }) => (

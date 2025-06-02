@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 // src/services/geminiService.ts
 import { GenerateContentResponse, GoogleGenAI } from "@google/genai";
 

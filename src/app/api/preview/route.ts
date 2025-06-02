@@ -1,26 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import { previewStorage } from "@/lib/preview-storage";
+import { PreviewData } from "@/lib/types";
 
 // POST: Store transformed HTML and return preview ID
 export async function POST(request: NextRequest) {
   try {
-    const { html, theme, originalUrl } = await request.json();
-
-    if (!html || !theme) {
-      return NextResponse.json({ error: "HTML and theme are required" }, { status: 400 });
-    }
+    const previewData: PreviewData = await request.json();
 
     // Generate unique ID for this preview
     const previewId = generatePreviewId();
 
     // Store the transformed data
-    await previewStorage.set(previewId, {
-      html,
-      theme,
-      originalUrl: originalUrl || "",
-      createdAt: new Date().toISOString(),
-    });
+    await previewStorage.set(previewId, previewData);
 
     // Return the preview URL
     const previewUrl = `${getBaseUrl(request)}/api/preview/${previewId}`;
@@ -31,6 +23,7 @@ export async function POST(request: NextRequest) {
       previewUrl,
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error("Preview storage error:", error);
     return NextResponse.json({ error: "Failed to store preview" }, { status: 500 });
   }

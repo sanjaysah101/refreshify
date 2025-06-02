@@ -9,12 +9,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
 import { worksWithSites } from "../../lib/constants";
+import { ScrapedData } from "../../lib/types";
 import { Button } from "../ui/button";
 import { CardSpotlight } from "../ui/card-spotlight";
 import { ShinyText } from "../ui/shiny-text";
 
 interface UrlInputProps {
-  onDataScraped?: (data: any) => void;
+  onDataScraped: (_data: ScrapedData) => void;
   onAnalyzeStart?: () => void;
   url: string;
   setUrl: React.Dispatch<React.SetStateAction<string>>;
@@ -84,11 +85,11 @@ export const UrlInput = ({ onDataScraped, onAnalyzeStart, url, setUrl }: UrlInpu
 
       const result = await response.json();
       if (result.success) {
-        onDataScraped?.(result.data);
+        onDataScraped(result.data);
       } else {
         setError(result.error || "Failed to analyze website");
       }
-    } catch (error) {
+    } catch {
       setError("Network error. Please try again.");
     } finally {
       setIsValidating(false);

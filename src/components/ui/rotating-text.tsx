@@ -15,7 +15,7 @@ import { cn } from "../../lib/utils";
 interface RotatingTextRef {
   next: () => void;
   previous: () => void;
-  jumpTo: (index: number) => void;
+  jumpTo: (_index: number) => void;
   reset: () => void;
 }
 
@@ -37,7 +37,7 @@ interface RotatingTextProps
   loop?: boolean;
   auto?: boolean;
   splitBy?: "characters" | "words" | "lines" | string;
-  onNext?: (index: number) => void;
+  onNext?: (_index: number) => void;
   mainClassName?: string;
   splitLevelClassName?: string;
   elementLevelClassName?: string;
@@ -75,6 +75,7 @@ export const RotatingText = forwardRef<RotatingTextRef, RotatingTextProps>(
           const segmenter = new Intl.Segmenter("en", { granularity: "grapheme" });
           return Array.from(segmenter.segment(text), (segment) => segment.segment);
         } catch (error) {
+          // eslint-disable-next-line no-console
           console.error("Intl.Segmenter failed, falling back to simple split:", error);
           return text.split("");
         }

@@ -15,7 +15,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from ".
 interface ThemeSelectorProps {
   idPrefix: string;
   selectedTheme: string;
-  onThemeChange: (value: string) => void;
+  onThemeChange: (_value: string) => void;
   isLoading: boolean;
   handleTransform: () => void;
 }

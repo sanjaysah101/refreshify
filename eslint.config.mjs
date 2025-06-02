@@ -12,7 +12,7 @@ const compat = new FlatCompat({
 
 const eslintConfig = [
   {
-    ignores: ["**/.next/**", "**/node_modules/**", "**/dist/**", "**/build/**", "**/out/**"],
+    ignores: ["**/.next/**", "**/node_modules/**", "**/dist/**", "**/build/**", "**/out/**", "**/generated/**"],
   },
   { plugins: { "jsx-a11y": eslintPluginJsxA11y } },
   ...compat.config({
@@ -23,7 +23,7 @@ const eslintConfig = [
       "prefer-const": ["error"],
       "jsx-quotes": ["error", "prefer-double"],
       quotes: ["error", "double"],
-      "no-unused-vars": ["warn"],
+      "no-unused-vars": ["warn", { argsIgnorePattern: "^_" }],
     },
   }),
 ];

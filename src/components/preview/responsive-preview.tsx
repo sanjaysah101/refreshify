@@ -7,18 +7,12 @@ import { Monitor, Smartphone, Tablet } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { ScrapedData } from "@/lib/types";
 
 /* eslint-disable @next/next/no-img-element */
 
-interface ResponsivePreviewProps {
-  title: string;
-  screenshot?: string;
+interface ResponsivePreviewProps extends ScrapedData {
   type: "original" | "transformed";
-  metadata?: {
-    title: string;
-    description: string;
-  };
-  html?: string;
 }
 
 type ViewportSize = "desktop" | "tablet" | "mobile";
@@ -34,7 +28,13 @@ const viewportSizes = {
   },
 };
 
-export const ResponsivePreview = ({ title, screenshot, type, metadata, html }: ResponsivePreviewProps) => {
+export const ResponsivePreview = (props: ResponsivePreviewProps) => {
+  const {
+    metadata: { title, description },
+    type,
+    html,
+    screenshot,
+  } = props;
   const [viewport, setViewport] = useState<ViewportSize>("desktop");
   const [showLive, setShowLive] = useState(false);
 
@@ -116,10 +116,10 @@ export const ResponsivePreview = ({ title, screenshot, type, metadata, html }: R
         </div>
 
         {/* Metadata */}
-        {metadata && (
+        {title && (
           <div className="space-y-1">
-            <h4 className="text-sm font-medium">{metadata.title}</h4>
-            <p className="text-muted-foreground line-clamp-2 text-xs">{metadata.description}</p>
+            <h4 className="text-sm font-medium">{title}</h4>
+            <p className="text-muted-foreground line-clamp-2 text-xs">{description}</p>
           </div>
         )}
       </div>

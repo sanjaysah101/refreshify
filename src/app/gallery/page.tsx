@@ -1,6 +1,9 @@
 "use client";
-import { Compare } from "@/components/ui/compare";
+
 import { useEffect, useState } from "react";
+
+import { Compare } from "@/components/ui/compare";
+
 import { PreviewData } from "../../generated/prisma";
 
 export default function GalleryPage() {
@@ -24,22 +27,24 @@ export default function GalleryPage() {
   return (
     <div className="container">
       <h1>Transformed Websites Gallery</h1>
-      <div className="flex gap-4 flex-wrap">
+      <div className="flex flex-wrap gap-4">
         {previews.map((preview) => (
           <div
-          role="presentation"
+            role="presentation"
             key={preview.previewId}
-            className="border border-white p-4 rounded-lg shadow-md cursor-pointer"
+            className="cursor-pointer rounded-lg border border-white p-4 shadow-md"
             onClick={() => handleCardClick(preview.previewId)}
           >
-            <div><strong>Original URL:</strong> {preview.originalUrl}</div>
-            <div><strong>Theme:</strong> {preview.theme}</div>
-            <div><strong>Created:</strong> {new Date(preview.createdAt).toLocaleString()}</div>
-            <Compare
-              firstImage={preview?.originalScreenshot}
-              secondImage={preview?.transformedScreenshot}
-              className="my-2"
-            />
+            <div>
+              <strong>Original URL:</strong> {preview.url}
+            </div>
+            <div>
+              <strong>Theme:</strong> {preview.theme}
+            </div>
+            <div>
+              <strong>Created:</strong> {new Date(preview.createdAt).toLocaleString()}
+            </div>
+            <Compare firstImage={preview.screenshot} secondImage={preview.transformedScreenshot} className="my-2" />
           </div>
         ))}
       </div>

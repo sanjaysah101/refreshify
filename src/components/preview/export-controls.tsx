@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 "use client";
 
 import { useState } from "react";
@@ -8,27 +9,23 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
+import { TransformedData } from "../../lib/types";
 import { ShinyText } from "../ui/shiny-text";
 
 interface ExportControlsProps {
-  transformedData?: {
-    html: string;
-    theme: string;
-    transformedAt: string;
-  };
-  originalUrl?: string;
-  shareUrl?: string;
-  onNewShareUrl?: (data: any) => Promise<void>;
+  transformedData: TransformedData;
+  shareUrl: string;
+  onNewShareUrl: (_data: TransformedData) => Promise<void>;
 }
 
-export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewShareUrl }: ExportControlsProps) => {
+export const ExportControls = ({ transformedData, shareUrl, onNewShareUrl }: ExportControlsProps) => {
   const [isGeneratingUrl, setIsGeneratingUrl] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
 
   const handleDownloadHTML = () => {
     if (!transformedData) return;
 
-    const blob = new Blob([transformedData.html], { type: "text/html" });
+    const blob = new Blob([transformedData.transformedHtml], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
@@ -43,7 +40,7 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
     if (!transformedData) return;
 
     const parser = new DOMParser();
-    const doc = parser.parseFromString(transformedData.html, "text/html");
+    const doc = parser.parseFromString(transformedData.transformedHtml, "text/html");
     const styleElement = doc.querySelector("style");
     const css = styleElement?.textContent || "";
 
@@ -63,13 +60,13 @@ export const ExportControls = ({ transformedData, originalUrl, shareUrl, onNewSh
 
     const newWindow = window.open("", "_blank");
     if (newWindow) {
-      newWindow.document.write(transformedData.html);
+      newWindow.document.write(transformedData.transformedHtml);
       newWindow.document.close();
     }
   };
 
   const handleRegenerateShareUrl = async () => {
-    if (!transformedData || !onNewShareUrl) return;
+    if (!transformedData) return;
 
     setIsGeneratingUrl(true);
     try {
