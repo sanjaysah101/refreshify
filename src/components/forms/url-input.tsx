@@ -2,12 +2,14 @@
 
 import React, { useState } from "react";
 
+import { motion } from "framer-motion";
 import { Globe, Loader2, Sparkles } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+
+import { Button } from "../ui/button";
 
 interface UrlInputProps {
   onDataScraped?: (data: any) => void;
@@ -137,6 +139,15 @@ export const UrlInput = ({ onDataScraped, onAnalyzeStart }: UrlInputProps) => {
                 </>
               )}
             </Button>
+            <motion.button
+              type="submit"
+              className="hover:bg-opacity-90 w-full flex-shrink-0 rounded-md bg-[#0CF2A0] px-5 py-2 text-sm font-semibold whitespace-nowrap text-[#111111] shadow-sm transition-colors duration-200 hover:shadow-md sm:w-auto"
+              whileHover={{ scale: 1.03, y: -1 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            >
+              See Refreshify in action
+            </motion.button>
           </div>
         </div>
         {error && (
